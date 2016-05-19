@@ -63,7 +63,7 @@ class Uniqueness extends Validator
 			let label   = this->getOption("label"),
 				message = this->getOption("message");
 
-			if typeof fields === "array" {
+			if typeof field === "array" {
 				if empty message {
                 	let message = validation->getDefaultMessage("UniquenessFieldset");
                 }
