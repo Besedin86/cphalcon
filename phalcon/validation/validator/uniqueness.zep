@@ -114,7 +114,7 @@ class Uniqueness extends Validator
 
 		for field in fields {
 			let value = validation->getValue(field),
-			attribute = this->getColumnNameReal(record, this->getOption("attribute", field));
+				attribute = this->getColumnNameReal(record, this->getOption("attribute", field));
 
 			let params["conditions"][] = attribute . " = ?" . index;
 			let params["bind"][] = value;
