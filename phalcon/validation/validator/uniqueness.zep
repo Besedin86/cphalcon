@@ -63,22 +63,20 @@ class Uniqueness extends Validator
 			let label   = this->getOption("label"),
 				message = this->getOption("message");
 
+			if empty label {
+				let label = validation->getLabel(field);
+			}
+
 			if typeof field === "array" {
-				if empty label {
-					let label = validation->getLabel(field);
-				}
 
 				if empty message {
-                	let message = validation->getDefaultMessage("UniquenessFieldset");
-                }
+					let message = validation->getDefaultMessage("UniquenessFieldset");
+				}
 
 				for fieldName in field {
 					validation->appendMessage(new Message(strtr(message, [":fieldset": label]), fieldName, "Uniqueness", this->getOption("code")));
 				}
 			} elseif typeof field === "string" {
-				if empty label {
-					let label = validation->getLabel(field);
-				}
 
 				if empty message {
 					let message = validation->getDefaultMessage("Uniqueness");
