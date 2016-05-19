@@ -79,6 +79,7 @@
 - Added new getter `Phalcon\Mvc\Model\Query\Builder::getJoins()` - to get join parts from query builder
 - Fixed `Phalcon\Db\Dialect\Oracle::prepareTable()` to correctly generate SQL for table aliases [#11799](https://github.com/phalcon/cphalcon/issues/11799)
 - Fixed `Phalcon\Mvc\Model\Resultset::update()` - removed endless loop queries
+- Added ability to set array of fields for `Phalcon\Validation\Validator\Uniqueness` validator [#11807](https://github.com/phalcon/cphalcon/issues/11807)
 
 # [2.0.11](https://github.com/phalcon/cphalcon/releases/tag/phalcon-v2.0.11) (????-??-??)
 - Fix Model magic set functionality to maintain variable visibility and utilize setter methods.[#11286](https://github.com/phalcon/cphalcon/issues/11286)

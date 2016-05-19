@@ -162,7 +162,7 @@ class Validation extends Injectable implements ValidationInterface
 	/**
 	 * Adds a validator to a field
 	 */
-	public function add(string field, <ValidatorInterface> validator) -> <Validation>
+	public function add(field, <ValidatorInterface> validator) -> <Validation>
 	{
 		let this->_validators[] = [field, validator];
 		return this;
@@ -171,7 +171,7 @@ class Validation extends Injectable implements ValidationInterface
 	/**
 	 * Alias of `add` method
 	 */
-	public function rule(string field, <ValidatorInterface> validator) -> <Validation>
+	public function rule(field, <ValidatorInterface> validator) -> <Validation>
 	{
 		return this->add(field, validator);
 	}
@@ -179,7 +179,7 @@ class Validation extends Injectable implements ValidationInterface
 	/**
 	 * Adds the validators to a field
 	 */
-	public function rules(string! field, array! validators) -> <Validation>
+	public function rules(field, array! validators) -> <Validation>
 	{
 		var validator;
 
@@ -192,31 +192,50 @@ class Validation extends Injectable implements ValidationInterface
 	}
 
 	/**
-	 * Adds filters to the field
+	 * Adds filters to the field or fields combinations
 	 *
-	 * @param string field
+	 * @param mixed field
 	 * @param array|string filters
 	 * @return \Phalcon\Validation
 	 */
-	public function setFilters(string field, filters) -> <Validation>
+	public function setFilters(field, filters) -> <Validation>
 	{
-		let this->_filters[field] = filters;
+		if typeof field == "array" {
+			let this->_filters[join(",", field)] = filters;
+		} elseif typeof field == "string" {
+			let this->_filters[field] = filters;
+		}
+
 		return this;
 	}
 
 	/**
 	 * Returns all the filters or a specific one
 	 *
-	 * @param string field
+	 * @param mixed field
 	 * @return mixed
 	 */
-	public function getFilters(string field = null)
+	public function getFilters(field = null)
 	{
 		var filters, fieldFilters;
 		let filters = this->_filters;
 
-		if field === null || field === "" {
+		if field === null {
 			return filters;
+		}
+
+		if typeof field === "string" {
+			if field === "" {
+				return filters;
+			}
+		}
+
+		if typeof field === "array" {
+			if count(field) === 0 {
+				return filters;
+			}
+
+			let field = join(",", field);
 		}
 
 		if !fetch fieldFilters, filters[field] {
@@ -287,6 +306,7 @@ class Validation extends Injectable implements ValidationInterface
 			"TooLong": "Field :field must not exceed :max characters long",
 			"TooShort": "Field :field must be at least :min characters long",
 			"Uniqueness": "Field :field must be unique",
+			"UniquenessFieldSet": "Fieldset :fieldset must be unique",
 			"Url": "Field :field must be a url",
 			"CreditCard": "Field :field is not valid for a credit card number",
 			"Date": "Field :field is not a valid date"

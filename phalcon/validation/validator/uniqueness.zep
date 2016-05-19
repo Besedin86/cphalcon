@@ -54,9 +54,9 @@ class Uniqueness extends Validator
 	/**
 	 * Executes the validation
 	 */
-	public function validate(<Validation> validation, string! field) -> boolean
+	public function validate(<Validation> validation, var field) -> boolean
 	{
-		var message, label;
+		var message, labels;
 
 		if !this->isUniqueness(validation, field) {
 
@@ -67,31 +67,45 @@ class Uniqueness extends Validator
 				let label = validation->getLabel(field);
 			}
 
-			if empty message {
-				let message = validation->getDefaultMessage("Uniqueness");
+			if typeof field === "array" {
+
+				if empty message {
+					let message = validation->getDefaultMessage("Uniqueness");
+				}
+
+				validation->appendMessage(new Message(strtr(message, [":field": label]), field, "Uniqueness", this->getOption("code")));
+			} elseif typeof field === "string" {
+				if empty message {
+					let message = validation->getDefaultMessage("UniquenessFieldset");
+				}
+
+				validation->appendMessage(new Message(strtr(message, [":fieldset": label]), field, "Uniqueness", this->getOption("code")));
 			}
 
-			validation->appendMessage(new Message(strtr(message, [":field": label]), field, "Uniqueness", this->getOption("code")));
 			return false;
 		}
 
 		return true;
 	}
 
-	protected function isUniqueness(<Validation> validation, string! field) -> boolean
+	protected function isUniqueness(<Validation> validation, field) -> boolean
 	{
-		var value, record, attribute, except,
+		var fields, value, record, attribute, except,
 			index, params, metaData, primaryField, className;
 
-		let value = validation->getValue(field),
-			record = this->getOption("model");
+		let fields = [];
+
+		if typeof field == "string" {
+			let fields[] = field;
+		} elseif typeof	field != "array" {
+			throw new Exception(sprintf("\"field\" param must be string or array type, %s given", gettype(field)));
+		}
+
+		let record = this->getOption("model");
 
 		if empty record || typeof record != "object" {
 			throw new Exception("Model of record must be set to property \"model\"");
 		}
-
-		let attribute = this->getColumnNameReal(record, this->getOption("attribute", field)),
-			except = this->getOption("except");
 
 		let index  = 0;
 		let params = [
@@ -99,9 +113,16 @@ class Uniqueness extends Validator
 			"bind": []
 		];
 
-		let params["conditions"][] = attribute . " = ?" . index;
-		let params["bind"][] = value;
-		let index++;
+		for field in fields {
+			let value = validation->getValue(field),
+			attribute = this->getColumnNameReal(record, this->getOption("attribute", field));
+
+			let params["conditions"][] = attribute . " = ?" . index;
+			let params["bind"][] = value;
+			let index++;
+		}
+
+		let except = this->getOption("except");
 
 		if except {
 			let params["conditions"][] = attribute . " <> ?" . index;
