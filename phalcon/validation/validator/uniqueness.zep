@@ -56,7 +56,7 @@ class Uniqueness extends Validator
 	 */
 	public function validate(<Validation> validation, field) -> boolean
 	{
-		var message, label;
+		var message, label, fieldName;
 
 		if !this->isUniqueness(validation, field) {
 
