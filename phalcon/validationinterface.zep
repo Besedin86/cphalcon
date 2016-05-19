@@ -44,12 +44,12 @@ interface ValidationInterface
 	/**
 	 * Adds a validator to a field
 	 */
-	public function add(string field, <ValidatorInterface> validator) -> <Validation>;
+	public function add(field, <ValidatorInterface> validator) -> <Validation>;
 
 	/**
 	 * Alias of `add` method
 	 */
-	public function rule(string field, <ValidatorInterface> validator) -> <Validation>;
+	public function rule(field, <ValidatorInterface> validator) -> <Validation>;
 
 	/**
 	 * Adds the validators to a field
@@ -59,19 +59,19 @@ interface ValidationInterface
 	/**
 	 * Adds filters to the field
 	 *
-	 * @param string field
+	 * @param mixed field
 	 * @param array|string filters
 	 * @return \Phalcon\Validation
 	 */
-	public function setFilters(string field, filters) -> <Validation>;
+	public function setFilters(field, filters) -> <Validation>;
 
 	/**
 	 * Returns all the filters or a specific one
 	 *
-	 * @param string field
+	 * @param  mixed field
 	 * @return mixed
 	 */
-	public function getFilters(string field = null);
+	public function getFilters(field = null);
 
 	/**
 	 * Returns the validators added to the validation
