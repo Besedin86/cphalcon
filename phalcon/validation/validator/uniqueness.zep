@@ -54,7 +54,7 @@ class Uniqueness extends Validator
 	/**
 	 * Executes the validation
 	 */
-	public function validate(<Validation> validation, var field) -> boolean
+	public function validate(<Validation> validation, field) -> boolean
 	{
 		var message, label;
 
@@ -63,23 +63,24 @@ class Uniqueness extends Validator
 			let label   = this->getOption("label"),
 				message = this->getOption("message");
 
-			if empty label {
-				let label = validation->getLabel(field);
-			}
+			if typeof fields === "array" {
+				if empty message {
+                	let message = validation->getDefaultMessage("UniquenessFieldset");
+                }
 
-			if typeof field === "array" {
+				for fieldName in field {
+					validation->appendMessage(new Message(strtr(message, [":fieldset": label]), fieldName, "Uniqueness", this->getOption("code")));
+				}
+			} elseif typeof field === "string" {
+				if empty label {
+					let label = validation->getLabel(field);
+				}
 
 				if empty message {
 					let message = validation->getDefaultMessage("Uniqueness");
 				}
 
 				validation->appendMessage(new Message(strtr(message, [":field": label]), field, "Uniqueness", this->getOption("code")));
-			} elseif typeof field === "string" {
-				if empty message {
-					let message = validation->getDefaultMessage("UniquenessFieldset");
-				}
-
-				validation->appendMessage(new Message(strtr(message, [":fieldset": label]), field, "Uniqueness", this->getOption("code")));
 			}
 
 			return false;
@@ -102,10 +103,6 @@ class Uniqueness extends Validator
 		}
 
 		let record = this->getOption("model");
-
-		if empty record || typeof record != "object" {
-			throw new Exception("Model of record must be set to property \"model\"");
-		}
 
 		let index  = 0;
 		let params = [
